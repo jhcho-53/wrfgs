@@ -10,8 +10,9 @@ from . import dataio, geometry, spectrum
 
 def list_cavs(channel_scenario_dir):
     return sorted(
-        d for d in os.listdir(channel_scenario_dir)
-        if d.startswith("cav_") and os.path.isdir(os.path.join(channel_scenario_dir, d))
+        (d for d in os.listdir(channel_scenario_dir)
+         if d.startswith("cav_") and os.path.isdir(os.path.join(channel_scenario_dir, d))),
+        key=lambda d: int(d.split("_")[1]),  # numeric order: cav_2 before cav_10
     )
 
 
