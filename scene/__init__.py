@@ -35,7 +35,7 @@ class Scene:
         self.loaded_iter = None
         self.gaussians = gaussians
         self.batch_size = 1
-        self.datadir = "./data_test200" # Choose the dataset directory  
+        self.datadir = args.datadir  # configurable via --datadir (default ./data_test200)
         self.cameras_extent = 2
         
         yaml_file_path = os.path.join(self.datadir, 'gateway_info.yml')
