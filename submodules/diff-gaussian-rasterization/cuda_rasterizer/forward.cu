@@ -501,6 +501,14 @@ __global__ void preprocessCUDA(int P/*3D Gaus number*/, int D/*active_sh_degree_
 	float my_radius = ceil(3.f * sqrt(max(lambda1, lambda2)));
 // float my_radius_y = ceil(3.f * sqrt(min(lambda1, lambda2)));
 // float my_radius_x = my_radius * cov.w;
+	// Guard equirectangular projection singularities (poles / near-camera): a
+	// non-finite or non-positive-definite 2D covariance yields a huge/NaN radius
+	// that overflows the tile rectangle below and allocates absurd buffers (OOM).
+	// Cull such Gaussians, then bound the radius to the image so getRect can never
+	// span more than the whole panorama.
+	if (!isfinite(my_radius) || !isfinite(det) || det <= 0.0f)
+		return;
+	my_radius = fminf(my_radius, (float)max(W, H));
 	float2 point_image = { ndc2Pix(p_proj.x, W), ndc2Pix(p_proj.y, H) };
 // int2 rect_min, rect_max;
 	uint2 rect_min, rect_max;

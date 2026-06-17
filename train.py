@@ -63,7 +63,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     log_savepath = os.path.join(logdir, log_filename)
     os.makedirs(logdir,exist_ok=True)
     logger = logger_config(log_savepath=log_savepath, logging_name='gsss')
-    logger.info("datadir:%s, logdir:%s", datadir, logdir)
+    logger.info("datadir:%s, logdir:%s", dataset.datadir, logdir)
     
     first_iter = 0
     tb_writer = prepare_output_and_logger(dataset,current_time)

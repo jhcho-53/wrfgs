@@ -14,6 +14,19 @@
 
 #include "config.h"
 #include "stdio.h"
+#include <math.h>
+
+// nvcc 13 device codegen cannot lower glibc's _Float32-typed pi macros
+// (M_1_PIf32 / M_2_PIf32) -> ICE "unsupported float variant". Force plain
+// 32-bit float with the identical numeric values (1/pi, 2/pi).
+#ifdef M_1_PIf32
+#undef M_1_PIf32
+#endif
+#define M_1_PIf32 0.318309886183790671538f
+#ifdef M_2_PIf32
+#undef M_2_PIf32
+#endif
+#define M_2_PIf32 0.636619772367581343076f
 
 #define BLOCK_SIZE (BLOCK_X * BLOCK_Y)
 #define NUM_WARPS (BLOCK_SIZE/32)
