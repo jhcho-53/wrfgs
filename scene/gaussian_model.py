@@ -186,7 +186,40 @@ class GaussianModel:
         exposure = torch.eye(3, 4, device="cuda")[None].repeat(1, 1, 1)
         
         self._exposure = nn.Parameter(exposure.requires_grad_(True))
-    
+
+    def init_from_lidar(self, points, opacity=0.1):
+        """Initialise Gaussians ON the static scene geometry (RSU lidar points,
+        RSU-local metres) for the scene-conditioned / cross-scene model.
+
+        The positions ARE the per-scene input and every per-Gaussian attribute is
+        FROZEN (requires_grad=False): SH features start at zero and all variation
+        — the per-Gaussian EM signal/shape — is produced by the SHARED DeformModel
+        (d_signal/d_scaling/d_rotation) conditioned on (point xyz, tx_pos). So a
+        held-out scene just plugs in its lidar; no per-scene parameters are learnt.
+        """
+        if not torch.is_tensor(points):
+            points = torch.tensor(np.asarray(points), dtype=torch.float32)
+        pts = points.float().cuda()
+        N = pts.shape[0]
+        features = torch.zeros((N, 3, (self.max_sh_degree + 1) ** 2)).float().cuda()
+        print("Number of points at initialisation (lidar): ", N)
+        dist2 = torch.clamp_min(distCUDA2(pts), 0.0000001)
+        scales = torch.log(torch.sqrt(dist2))[..., None].repeat(1, 3)
+        rots = torch.zeros((N, 4), device="cuda")
+        rots[:, 0] = 1
+        opacities = inverse_sigmoid(opacity * torch.ones((N, 1), dtype=torch.float, device="cuda"))
+        # frozen scene geometry + appearance; only the shared DeformModel learns
+        self._xyz = nn.Parameter(pts, requires_grad=False)
+        self._features_dc = nn.Parameter(features[:, :, 0:1].transpose(1, 2).contiguous(), requires_grad=False)
+        self._features_rest = nn.Parameter(features[:, :, 1:].transpose(1, 2).contiguous(), requires_grad=False)
+        self._scaling = nn.Parameter(scales, requires_grad=False)
+        self._rotation = nn.Parameter(rots, requires_grad=False)
+        self._opacity = nn.Parameter(opacities, requires_grad=False)
+        self.max_radii2D = torch.zeros((self.get_xyz.shape[0]), device="cuda")
+        self.pretrained_exposures = None
+        exposure = torch.eye(3, 4, device="cuda")[None].repeat(1, 1, 1)
+        self._exposure = nn.Parameter(exposure, requires_grad=False)
+
     def create_from_pcd(self, pcd : BasicPointCloud, cam_infos : int, spatial_lr_scale : float):
         self.spatial_lr_scale = spatial_lr_scale
         fused_point_cloud = torch.tensor(np.asarray(pcd.points)).float().cuda()
