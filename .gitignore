@@ -1,3 +1,7 @@
 data_mw_*/
 submodules/*/build/
 submodules/**/build/
+__pycache__/
+*.pyc
+logs/
+output/
