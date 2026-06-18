@@ -29,6 +29,27 @@ from scene.dataloader import dataset_dict
 from gaussian_renderer import render
 from utils.generate_camera import generate_new_cam
 from utils.loss_utils import l1_loss, ssim
+from utils.rel_deform import RelDeformModel
+import json, sys
+
+
+def scene_scale_yaw(datadir, scenario):
+    """Per-scene tx-normalisation scale + RSU yaw (cached in datadir/meta.json),
+    needed to map normalised tx_pos back to the Rx-frame metres of the lidar."""
+    meta_p = os.path.join(datadir, "meta.json")
+    if os.path.exists(meta_p):
+        m = json.load(open(meta_p)); return m["scale"], m["yaw"]
+    sys.path.insert(0, "tools")
+    from mw2wrfgs import dataio
+    from mw2wrfgs.assemble import enumerate_samples, measure_scale
+    root = "/NHNHOME/WORKSPACE/0526040099_A/jaehyeon/multimodal_wireless"
+    town = scenario.split("_")[0]
+    ch = dataio.channel_scenario_dir(root, "sunny", "Nt_1_64_Nr_1_16_fc_28GHz", town, scenario)
+    sen = dataio.resolve_sensor_dir(root, "sunny", town, scenario)
+    rsu, yaw = dataio.load_rsu_pose(os.path.join(sen, "config.yaml"), scenario)
+    scale = measure_scale(enumerate_samples(ch, sen), rsu)
+    json.dump({"scale": scale, "yaw": yaw}, open(meta_p, "w"))
+    return scale, yaw
 
 try:
     from fused_ssim import fused_ssim
@@ -59,6 +80,15 @@ class SceneHolder:
         self.gaussians = GaussianModel(sh_degree)
         self.gaussians.init_from_lidar(to_cam_frame(np.load(lidar_npy)))
         self.name = os.path.basename(datadir.rstrip("/"))
+        # tx_pos (normalised, R_z(yaw)^-1 frame) -> Rx-frame metres, for relative geometry
+        scenario = os.path.basename(lidar_npy).replace(".npy", "")
+        self.scale, yaw = scene_scale_yaw(datadir, scenario)
+        self.Rz = torch.tensor(Rotation.from_euler("z", yaw, degrees=True).as_matrix(),
+                               dtype=torch.float32, device="cuda")
+
+    def tx_to_cam(self, tx_pos):
+        w = self.Rz @ (tx_pos.cuda().reshape(3).float() * self.scale)  # world (cav-rsu)
+        return w[[0, 2, 1]]                                            # camera frame (y-up)
 
     def next(self):
         try:
@@ -69,9 +99,8 @@ class SceneHolder:
 
 
 def predict(sc, deform, pipe, bg, tx_pos):
-    N = sc.gaussians.get_xyz.shape[0]
-    time_input = tx_pos.cuda().reshape(1, -1).expand(N, -1)
-    d_xyz, d_rot, d_scl, d_sig = deform.step(sc.gaussians.get_xyz.detach(), time_input)
+    tx_cam = sc.tx_to_cam(tx_pos)                                 # Tx in Rx-frame metres
+    d_xyz, d_rot, d_scl, d_sig = deform.step(sc.gaussians.get_xyz, tx_cam)
     img = render(sc.cam, sc.gaussians, pipe, bg, d_xyz, d_rot, d_scl, d_sig,
                  use_trained_exp=False, separate_sh=False)["render"]
     return torch.abs(img[0] + 1j * img[1])                       # (90, 360) magnitude
@@ -101,27 +130,33 @@ def main():
     parser.add_argument("--holdout-scenes", nargs="+", default=[],
                         help="eval-only DATADIR:LIDAR_NPY (zero-shot, never trained)")
     parser.add_argument("--eval-every", type=int, default=4000)
+    parser.add_argument("--batch", type=int, default=1, help="render graphs per step (VRAM x B)")
     args = parser.parse_args()
     opt = op.extract(args); pipe = pp.extract(args)
     n_iter = opt.iterations  # from the standard --iterations (OptimizationParams)
 
     scenes = [SceneHolder(*s.split(":")) for s in args.scenes]
     holdout = [SceneHolder(*s.split(":")) for s in args.holdout_scenes]
-    print("[multiscene] train scenes: {} | HOLD-OUT (zero-shot): {}".format(
+    print("[multiscene-REL] train scenes: {} | HOLD-OUT (zero-shot): {}".format(
         [s.name for s in scenes], [s.name for s in holdout]))
-    deform = DeformModel()
+    deform = RelDeformModel()
     deform.train_setting(opt)
     bg = torch.zeros(3, device="cuda")
 
     ema = 0.0
     for it in range(1, n_iter + 1):
-        sc = scenes[it % len(scenes)]
-        spectrum, tx_pos = sc.next()
-        pred = predict(sc, deform, pipe, bg, tx_pos)
-        gt = spectrum.cuda().squeeze()
-        l1 = l1_loss(pred, gt)
-        sv = fused_ssim(pred[None, None], gt[None, None]) if FUSED else ssim(pred, gt)
-        loss = (1.0 - opt.lambda_dssim) * l1 + opt.lambda_dssim * (1.0 - sv)
+        # batch: keep B render graphs alive (uses ~B x render VRAM) for a
+        # larger effective batch / better gradients; scenes mixed within a step
+        loss = 0.0
+        for b in range(args.batch):
+            sc = scenes[(it * args.batch + b) % len(scenes)]
+            spectrum, tx_pos = sc.next()
+            pred = predict(sc, deform, pipe, bg, tx_pos)
+            gt = spectrum.cuda().squeeze()
+            l1 = l1_loss(pred, gt)
+            sv = fused_ssim(pred[None, None], gt[None, None]) if FUSED else ssim(pred, gt)
+            loss = loss + (1.0 - opt.lambda_dssim) * l1 + opt.lambda_dssim * (1.0 - sv)
+        loss = loss / args.batch
         loss.backward()
         deform.optimizer.step()
         deform.optimizer.zero_grad()
