@@ -21,8 +21,12 @@ the training scenes and collapses zero-shot (held-out SSIM 0.13–0.29), whereas
 conditioning on **relative single-bounce geometry** (incident/outgoing
 directions, bounce angle, log-distances) **generalizes** to unseen *in-distribution*
 scenes — held-out direction-of-arrival (DoA) error **10.6°** vs a 53.6° trivial
-baseline (5× better) — while still failing to **extrapolate** to an
-out-of-distribution scene (an elevated-RSU bridge scenario: 83°). A
+baseline (5× better) — while failing to **extrapolate** to an
+out-of-distribution scene (an elevated-RSU bridge scenario: 83°) **only when
+trained on too few (2) scenes**. **Scaling to 12 diverse training scenes (4
+towns, ground + elevated RSUs) resolves this**, achieving **cross-scene AND
+cross-town zero-shot generalization** on all 4 held-out scenes (DoA **1.7–5.8°**,
+2–21× better than the trivial baseline; the elevated scene **83° → 5.8°**). A
 power-weighted angular metric was essential to see any of this, because SSIM
 saturates on the smooth densified targets. This matches and extends the very
 recent literature (GeNeRT: relative features → generalization; RayProNet:
@@ -160,7 +164,33 @@ extrapolate** to the **out-of-distribution** ringroad — whose RSU sits at
 the model, never having seen an elevated RSU, mispredicts the azimuth (83°,
 worse than the average). This is the textbook in-distribution-generalization /
 out-of-distribution-extrapolation split, and it directly motivates broadening
-the training geometry distribution (§8).
+the training geometry distribution (§4.4).
+
+### 4.4 Scaling to 12 diverse scenes — cross-scene AND cross-town generalization
+We converted all **16 V2I scenarios across 4 towns** (Town03×5, Town05×5,
+Town07×2, Town10×4; ~54k samples), trained the relative model on **12** (held out
+one per town: Town03_5wayroad, Town05_ringroad, Town07_grainsilos,
+Town10_crossroad), and crucially **included elevated-RSU scenes (Town03_Tjunction
+z=8 m, Town03_crossroad z=8.2 m) in training**. 12k iterations.
+
+| Held-out scene | model DoA az-err | baseline DoA | advantage |
+|---|---|---|---|
+| Town03_5wayroad | **1.7°** | 36.0° | 21× |
+| Town05_ringroad (elevated) | **5.8°** | 53.5° | 9× |
+| Town07_grainsilos | **5.3°** | 36.7° | 7× |
+| Town10_crossroad | **3.5°** | 6.9° | 2× |
+
+**All four held-out scenes generalize** (DoA 1.7–5.8°, beating the trivial
+baseline 2–21×), and the held-out errors equal the train-scene errors (0.7–6.7°)
+— a negligible generalization gap. Decisively, **the elevated-RSU ringroad that
+catastrophically failed at 83° with 2 ground-only training scenes now
+generalizes at 5.8° (14×)** once the training set contains *other* elevated
+scenes. This is direct evidence that the earlier OOD failure was a
+**scene-coverage** problem, solved by scaling the training diversity — i.e. the
+relative-geometry scene-conditioned model achieves genuine **cross-scene and
+cross-town zero-shot generalization** given enough diverse scenes. (Held-out SSIM
+stays 0.81–0.90, around the saturated baseline — only the DoA metric reveals the
+result.)
 
 ---
 
@@ -174,9 +204,12 @@ the training geometry distribution (§8).
 2. **SSIM is the wrong metric here; a power-weighted DoA error is right.** On the
    smooth densified targets SSIM saturates (baseline 0.88–0.95) and hides both
    the success and the failure; the angular metric reveals both.
-3. **Generalization is in-distribution, not yet extrapolative.** 2 training
-   scenes cover too narrow a geometry distribution; the OOD elevated-RSU scene
-   fails. (Consistent with the literature's documented difficulty, §6.)
+3. **Diversity, not architecture, gates extrapolation — and scaling solves it.**
+   With only 2 (ground-only) training scenes the OOD elevated-RSU scene fails
+   (83°); with **12 diverse scenes including elevated RSUs it generalizes (5.8°,
+   14×)**, and all 4 cross-town held-out scenes beat the baseline 2–21×. The
+   relative-geometry model achieves genuine **cross-scene + cross-town zero-shot
+   generalization** given enough scene coverage.
 4. **The channel on this dataset is geometry-deterministic and dynamics-blind**
    (Sionna static-map ray tracing), so scene **geometry** — not measured
    neighbour spectra and not dynamics — is the right conditioning signal, and
@@ -246,16 +279,15 @@ conda `wrfgsplus` (py3.11 + torch 2.12 cu130).
 
 ## 8. Limitations & next steps
 
-- **Out-of-distribution extrapolation fails** (elevated-RSU ringroad). The clear
-  remedy: **scale to the 16 cross-town scenarios** (Town03×5, Town05×5, Town07×2,
-  Town10×4; ground + elevated RSUs; varied layouts), train on ~12 and hold out
-  ~4 (or leave-one-town-out). This broadens the training geometry distribution so
-  held-out scenes are more often in-distribution. *(Deferred: the converter is
-  CPU-bound and the shared node is currently saturated by another job; run when
-  the machine frees up.)*
+- **OOD extrapolation — RESOLVED by scaling (§4.4).** Training on 12 diverse
+  scenes (incl. elevated RSUs) turned the elevated-RSU ringroad from an 83° OOD
+  failure into a 5.8° success, and all 4 cross-town held-out scenes generalize.
+  Remaining: push further (all-but-one-town leave-out, harder geometries) and
+  establish the **scene-count scaling law** (unquantified in the literature).
 - **De-densify the target** (σ≈8, floor≈0.05) so the spectrum carries per-Tx
   structure and SSIM regains discriminative power (the angular metric already
-  compensates; both together are ideal). *(Deferred for the same CPU reason.)*
+  compensates; both together are ideal). *(Quick GPU re-train; CPU re-render
+  pending a free node.)*
 - **Physics priors** (GeNeRT-style Fresnel branches / a Sionna-RT differentiable
   prior) and **stronger geometry encoders** (sparse-conv over the lidar instead
   of frozen points) are candidate levers, ranked open in the literature.
@@ -266,9 +298,11 @@ conda `wrfgsplus` (py3.11 + torch 2.12 cu130).
 
 ## Figures (`docs/research/figures/`, PNG + PDF; `tools/qualitative_figure.py`)
 
-- **fig1_generalization** — (a) conditioning ablation: zero-shot held-out SSIM,
-  absolute vs relative; (b) zero-shot DoA azimuth error vs the mean-spectrum
-  baseline (CBD generalizes 5×, ringroad OOD-fails). The main result figure.
+- **fig5_scaleup** — THE headline: (a) scaling solves OOD (ringroad 83°→5.8°,
+  14×); (b) all 4 cross-town held-out scenes generalize, beating baseline 2–21×.
+- **fig1_generalization** — (a) conditioning ablation (2-scene): zero-shot
+  held-out SSIM, absolute vs relative; (b) zero-shot DoA azimuth error vs the
+  mean-spectrum baseline (CBD generalizes 5×, ringroad OOD-fails at 2 scenes).
 - **fig2_table** — results table: SSIM / DoA-error per method × held-out scene.
 - **fig3_diagnostics** — why we pivoted: (a) random-split leakage (NN-copy ≈
   trained), (b) dynamics-blind channel, (c) SSIM-saturation-vs-DoA-discrimination.
