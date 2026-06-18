@@ -106,19 +106,45 @@ def predict(sc, deform, pipe, bg, tx_pos):
     return torch.abs(img[0] + 1j * img[1])                       # (90, 360) magnitude
 
 
+def angular_err(pred, gt):
+    """Power-weighted DoA error (degrees): does the predicted energy sit at the
+    right azimuth/elevation? Discriminative even when SSIM saturates on smooth
+    targets. pred/gt: (90,360) magnitude images on cuda."""
+    import math
+    H, W = 90, 360
+    dev = pred.device
+    az = (torch.arange(W, device=dev, dtype=torch.float32) / W * 2 - 1) * math.pi
+    el = (torch.arange(H, device=dev, dtype=torch.float32) / H * 2 - 1) * (math.pi / 2)
+
+    def caz(img):
+        w = img.sum(0)
+        return torch.atan2((w * torch.sin(az)).sum(), (w * torch.cos(az)).sum())
+
+    def cel(img):
+        w = img.sum(1)
+        return (w * el).sum() / (w.sum() + 1e-6)
+    d = caz(pred) - caz(gt)
+    d = torch.abs((d + math.pi) % (2 * math.pi) - math.pi)
+    return float(d * 180 / math.pi), float(torch.abs(cel(pred) - cel(gt)) * 180 / math.pi)
+
+
 @torch.no_grad()
 def evaluate(scenes, deform, pipe, bg, n_max=120):
     deform.deform.eval()
     out = {}
     for sc in scenes:
-        sims = []
+        sims, aze, ele = [], [], []
         for k, (spectrum, tx_pos) in enumerate(sc.test_loader):
             if k >= n_max:
                 break
             pred = predict(sc, deform, pipe, bg, tx_pos)
             gt = spectrum.cuda().squeeze()
             sims.append(float(fused_ssim(pred[None, None], gt[None, None]) if FUSED else ssim(pred, gt)))
-        out[sc.name] = float(np.median(sims))
+            a, e = angular_err(pred, gt)
+            aze.append(a); ele.append(e)
+        out[sc.name] = {"ssim": round(float(np.median(sims)), 4),
+                        "az_err_deg": round(float(np.median(aze)), 1),
+                        "el_err_deg": round(float(np.median(ele)), 1)}
     deform.deform.train()
     return out
 
@@ -167,12 +193,10 @@ def main():
             print("[it {:6d}] loss(ema)={:.5f}".format(it, ema), flush=True)
         if it % args.eval_every == 0 or it == n_iter:
             res = evaluate(scenes, deform, pipe, bg)
-            print("[it {:6d}] TRAIN-scene median SSIM: {}".format(
-                it, {k: round(v, 4) for k, v in res.items()}), flush=True)
+            print("[it {:6d}] TRAIN-scene: {}".format(it, res), flush=True)
             if holdout:
                 hz = evaluate(holdout, deform, pipe, bg)
-                print("[it {:6d}] *** ZERO-SHOT held-out median SSIM: {} ***".format(
-                    it, {k: round(v, 4) for k, v in hz.items()}), flush=True)
+                print("[it {:6d}] *** ZERO-SHOT held-out: {} ***".format(it, hz), flush=True)
 
 
 if __name__ == "__main__":
