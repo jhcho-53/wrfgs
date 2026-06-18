@@ -264,6 +264,17 @@ conda `wrfgsplus` (py3.11 + torch 2.12 cu130).
 
 ---
 
+## Figures (`docs/research/figures/`, PNG + PDF; `tools/qualitative_figure.py`)
+
+- **fig1_generalization** — (a) conditioning ablation: zero-shot held-out SSIM,
+  absolute vs relative; (b) zero-shot DoA azimuth error vs the mean-spectrum
+  baseline (CBD generalizes 5×, ringroad OOD-fails). The main result figure.
+- **fig2_table** — results table: SSIM / DoA-error per method × held-out scene.
+- **fig3_diagnostics** — why we pivoted: (a) random-split leakage (NN-copy ≈
+  trained), (b) dynamics-blind channel, (c) SSIM-saturation-vs-DoA-discrimination.
+- **fig4_qualitative** — zero-shot held-out spectra (unseen CBDcrossroad): GT vs
+  absolute (collapses) vs relative (matches GT).
+
 ## 9. Reproducibility (code in this repo, branch `wrfgs-multimodal-adaptation`)
 
 - Converter: `tools/mw2wrfgs/` (+ `tools/calibrate_spectrum.py`,
