@@ -1,0 +1,85 @@
+Number of points at initialisation (lidar):  21043
+Number of points at initialisation (lidar):  22991
+Number of points at initialisation (lidar):  16814
+Number of points at initialisation (lidar):  19279
+Number of points at initialisation (lidar):  15127
+Number of points at initialisation (lidar):  21451
+Number of points at initialisation (lidar):  20582
+Number of points at initialisation (lidar):  20526
+Number of points at initialisation (lidar):  21257
+Number of points at initialisation (lidar):  21570
+Number of points at initialisation (lidar):  22764
+Number of points at initialisation (lidar):  16610
+Number of points at initialisation (lidar):  22604
+Number of points at initialisation (lidar):  21583
+Number of points at initialisation (lidar):  15440
+Number of points at initialisation (lidar):  22881
+[multiscene-REL] train scenes: ['data_mw_Town03_crossroad', 'data_mw_Town03_gastation', 'data_mw_Town03_roundabout', 'data_mw_Town03_Tjunction', 'data_mw_Town05_2skybridge', 'data_mw_Town05_CBDcrossroad', 'data_mw_town05_parkinglot', 'data_mw_Town05_Tjunction', 'data_mw_Town07_crossroad', 'data_mw_Town10_curvyroad', 'data_mw_Town10_Hroad', 'data_mw_Town10_skybridge'] | HOLD-OUT (zero-shot): ['data_mw_Town03_5wayroad', 'data_mw_Town05_ringroad', 'data_mw_Town07_grainsilos', 'data_mw_Town10_crossroad']
+[multiscene-REL] out_dir=experiments/16scene_zeroshot/runs/retrain_seed0_20260618_130123 seed=0 iters=12000
+[it    200] loss(ema)=0.22219
+[it    400] loss(ema)=0.10398
+[it    600] loss(ema)=0.09316
+[it    800] loss(ema)=0.08142
+[it   1000] loss(ema)=0.06992
+[it   1200] loss(ema)=0.07350
+[it   1400] loss(ema)=0.07021
+[it   1600] loss(ema)=0.06855
+[it   1800] loss(ema)=0.06226
+[it   2000] loss(ema)=0.06929
+[it   2200] loss(ema)=0.05329
+[it   2400] loss(ema)=0.05579
+[it   2600] loss(ema)=0.05697
+[it   2800] loss(ema)=0.05312
+[it   3000] loss(ema)=0.05715
+[it   3200] loss(ema)=0.05966
+[it   3400] loss(ema)=0.05461
+[it   3600] loss(ema)=0.05505
+[it   3800] loss(ema)=0.06186
+[it   4000] loss(ema)=0.05249
+[it   4000] TRAIN-scene: {'data_mw_Town03_crossroad': {'ssim': 0.8842, 'az_err_deg': 0.8, 'el_err_deg': 1.3}, 'data_mw_Town03_gastation': {'ssim': 0.8749, 'az_err_deg': 4.1, 'el_err_deg': 2.3}, 'data_mw_Town03_roundabout': {'ssim': 0.8989, 'az_err_deg': 3.8, 'el_err_deg': 1.3}, 'data_mw_Town03_Tjunction': {'ssim': 0.875, 'az_err_deg': 5.2, 'el_err_deg': 3.0}, 'data_mw_Town05_2skybridge': {'ssim': 0.9082, 'az_err_deg': 2.8, 'el_err_deg': 1.3}, 'data_mw_Town05_CBDcrossroad': {'ssim': 0.8798, 'az_err_deg': 2.4, 'el_err_deg': 1.9}, 'data_mw_town05_parkinglot': {'ssim': 0.8799, 'az_err_deg': 3.3, 'el_err_deg': 1.7}, 'data_mw_Town05_Tjunction': {'ssim': 0.8882, 'az_err_deg': 1.3, 'el_err_deg': 2.2}, 'data_mw_Town07_crossroad': {'ssim': 0.8743, 'az_err_deg': 1.3, 'el_err_deg': 1.6}, 'data_mw_Town10_curvyroad': {'ssim': 0.8843, 'az_err_deg': 1.1, 'el_err_deg': 1.5}, 'data_mw_Town10_Hroad': {'ssim': 0.885, 'az_err_deg': 1.4, 'el_err_deg': 1.5}, 'data_mw_Town10_skybridge': {'ssim': 0.9024, 'az_err_deg': 3.5, 'el_err_deg': 1.9}}
+[it   4000] *** ZERO-SHOT held-out: {'data_mw_Town03_5wayroad': {'ssim': 0.877, 'az_err_deg': 2.2, 'el_err_deg': 1.5}, 'data_mw_Town05_ringroad': {'ssim': 0.8174, 'az_err_deg': 3.2, 'el_err_deg': 1.9}, 'data_mw_Town07_grainsilos': {'ssim': 0.886, 'az_err_deg': 4.8, 'el_err_deg': 1.3}, 'data_mw_Town10_crossroad': {'ssim': 0.8747, 'az_err_deg': 1.1, 'el_err_deg': 1.3}} ***
+[it   4200] loss(ema)=0.06198
+[it   4400] loss(ema)=0.05597
+[it   4600] loss(ema)=0.05381
+[it   4800] loss(ema)=0.05890
+[it   5000] loss(ema)=0.06309
+[it   5200] loss(ema)=0.04772
+[it   5400] loss(ema)=0.05605
+[it   5600] loss(ema)=0.05471
+[it   5800] loss(ema)=0.04982
+[it   6000] loss(ema)=0.05459
+[it   6200] loss(ema)=0.05608
+[it   6400] loss(ema)=0.04737
+[it   6600] loss(ema)=0.05110
+[it   6800] loss(ema)=0.05326
+[it   7000] loss(ema)=0.04940
+[it   7200] loss(ema)=0.05576
+[it   7400] loss(ema)=0.05683
+[it   7600] loss(ema)=0.04531
+[it   7800] loss(ema)=0.06041
+[it   8000] loss(ema)=0.05921
+[it   8000] TRAIN-scene: {'data_mw_Town03_crossroad': {'ssim': 0.8899, 'az_err_deg': 3.2, 'el_err_deg': 1.1}, 'data_mw_Town03_gastation': {'ssim': 0.8819, 'az_err_deg': 1.3, 'el_err_deg': 1.5}, 'data_mw_Town03_roundabout': {'ssim': 0.902, 'az_err_deg': 1.7, 'el_err_deg': 1.1}, 'data_mw_Town03_Tjunction': {'ssim': 0.8867, 'az_err_deg': 8.9, 'el_err_deg': 2.1}, 'data_mw_Town05_2skybridge': {'ssim': 0.9157, 'az_err_deg': 3.9, 'el_err_deg': 1.0}, 'data_mw_Town05_CBDcrossroad': {'ssim': 0.8879, 'az_err_deg': 2.5, 'el_err_deg': 0.6}, 'data_mw_town05_parkinglot': {'ssim': 0.8872, 'az_err_deg': 2.1, 'el_err_deg': 1.0}, 'data_mw_Town05_Tjunction': {'ssim': 0.8942, 'az_err_deg': 2.7, 'el_err_deg': 0.9}, 'data_mw_Town07_crossroad': {'ssim': 0.8829, 'az_err_deg': 2.2, 'el_err_deg': 0.6}, 'data_mw_Town10_curvyroad': {'ssim': 0.8879, 'az_err_deg': 1.4, 'el_err_deg': 0.6}, 'data_mw_Town10_Hroad': {'ssim': 0.8849, 'az_err_deg': 1.7, 'el_err_deg': 0.5}, 'data_mw_Town10_skybridge': {'ssim': 0.9064, 'az_err_deg': 4.6, 'el_err_deg': 1.0}}
+[it   8000] *** ZERO-SHOT held-out: {'data_mw_Town03_5wayroad': {'ssim': 0.8868, 'az_err_deg': 1.3, 'el_err_deg': 0.5}, 'data_mw_Town05_ringroad': {'ssim': 0.8537, 'az_err_deg': 5.4, 'el_err_deg': 2.1}, 'data_mw_Town07_grainsilos': {'ssim': 0.8942, 'az_err_deg': 5.4, 'el_err_deg': 0.6}, 'data_mw_Town10_crossroad': {'ssim': 0.8788, 'az_err_deg': 1.6, 'el_err_deg': 0.5}} ***
+[it   8200] loss(ema)=0.04750
+[it   8400] loss(ema)=0.05515
+[it   8600] loss(ema)=0.05253
+[it   8800] loss(ema)=0.04964
+[it   9000] loss(ema)=0.04909
+[it   9200] loss(ema)=0.05187
+[it   9400] loss(ema)=0.04391
+[it   9600] loss(ema)=0.05498
+[it   9800] loss(ema)=0.05532
+[it  10000] loss(ema)=0.04611
+[it  10200] loss(ema)=0.04984
+[it  10400] loss(ema)=0.04783
+[it  10600] loss(ema)=0.04619
+[it  10800] loss(ema)=0.05108
+[it  11000] loss(ema)=0.04838
+[it  11200] loss(ema)=0.04302
+[it  11400] loss(ema)=0.04805
+[it  11600] loss(ema)=0.04767
+[it  11800] loss(ema)=0.04914
+[it  12000] loss(ema)=0.04917
+[it  12000] TRAIN-scene: {'data_mw_Town03_crossroad': {'ssim': 0.8913, 'az_err_deg': 0.3, 'el_err_deg': 1.1}, 'data_mw_Town03_gastation': {'ssim': 0.8853, 'az_err_deg': 1.6, 'el_err_deg': 1.9}, 'data_mw_Town03_roundabout': {'ssim': 0.8999, 'az_err_deg': 2.7, 'el_err_deg': 1.1}, 'data_mw_Town03_Tjunction': {'ssim': 0.8915, 'az_err_deg': 3.2, 'el_err_deg': 1.1}, 'data_mw_Town05_2skybridge': {'ssim': 0.9151, 'az_err_deg': 6.0, 'el_err_deg': 1.0}, 'data_mw_Town05_CBDcrossroad': {'ssim': 0.8893, 'az_err_deg': 1.5, 'el_err_deg': 1.0}, 'data_mw_town05_parkinglot': {'ssim': 0.889, 'az_err_deg': 2.4, 'el_err_deg': 1.2}, 'data_mw_Town05_Tjunction': {'ssim': 0.899, 'az_err_deg': 1.7, 'el_err_deg': 1.6}, 'data_mw_Town07_crossroad': {'ssim': 0.8836, 'az_err_deg': 0.8, 'el_err_deg': 1.2}, 'data_mw_Town10_curvyroad': {'ssim': 0.8898, 'az_err_deg': 1.1, 'el_err_deg': 1.0}, 'data_mw_Town10_Hroad': {'ssim': 0.8894, 'az_err_deg': 0.2, 'el_err_deg': 0.8}, 'data_mw_Town10_skybridge': {'ssim': 0.9062, 'az_err_deg': 4.8, 'el_err_deg': 1.5}}
+[it  12000] *** ZERO-SHOT held-out: {'data_mw_Town03_5wayroad': {'ssim': 0.8885, 'az_err_deg': 1.1, 'el_err_deg': 1.0}, 'data_mw_Town05_ringroad': {'ssim': 0.8452, 'az_err_deg': 3.7, 'el_err_deg': 2.1}, 'data_mw_Town07_grainsilos': {'ssim': 0.8906, 'az_err_deg': 2.7, 'el_err_deg': 1.1}, 'data_mw_Town10_crossroad': {'ssim': 0.8813, 'az_err_deg': 1.5, 'el_err_deg': 1.1}} ***
+[multiscene-REL] done -> experiments/16scene_zeroshot/runs/retrain_seed0_20260618_130123 (deform_latest.pth, results.json)

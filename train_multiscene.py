@@ -15,6 +15,8 @@ Each --scenes entry is "DATADIR:LIDAR_NPY". DATADIR is a converted dataset
 static RSU scene cloud from tools/extract_rsu_scene.py.
 """
 import os
+import random
+import time
 import numpy as np
 import torch
 import yaml
@@ -149,6 +151,15 @@ def evaluate(scenes, deform, pipe, bg, n_max=120):
     return out
 
 
+def set_seed(seed):
+    """Make the shared-MLP init and the per-scene DataLoader shuffling
+    deterministic so a re-run reproduces the reported DoA numbers."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+
 def main():
     parser = ArgumentParser()
     lp = ModelParams(parser); op = OptimizationParams(parser); pp = PipelineParams(parser)
@@ -157,17 +168,60 @@ def main():
                         help="eval-only DATADIR:LIDAR_NPY (zero-shot, never trained)")
     parser.add_argument("--eval-every", type=int, default=4000)
     parser.add_argument("--batch", type=int, default=1, help="render graphs per step (VRAM x B)")
+    parser.add_argument("--seed", type=int, default=0, help="RNG seed for reproducibility")
+    parser.add_argument("--out-dir", default=None,
+                        help="dir for checkpoints + results.json (default runs_multiscene/<ts>)")
+    parser.add_argument("--load-checkpoint", default=None,
+                        help="path to a deform_*.pth to load before train/eval")
+    parser.add_argument("--eval-only", action="store_true",
+                        help="load --load-checkpoint, evaluate train+holdout, write results, exit")
     args = parser.parse_args()
     opt = op.extract(args); pipe = pp.extract(args)
     n_iter = opt.iterations  # from the standard --iterations (OptimizationParams)
+
+    set_seed(args.seed)
+    out_dir = args.out_dir or os.path.join("runs_multiscene", time.strftime("%Y%m%d_%H%M%S"))
+    os.makedirs(out_dir, exist_ok=True)
 
     scenes = [SceneHolder(*s.split(":")) for s in args.scenes]
     holdout = [SceneHolder(*s.split(":")) for s in args.holdout_scenes]
     print("[multiscene-REL] train scenes: {} | HOLD-OUT (zero-shot): {}".format(
         [s.name for s in scenes], [s.name for s in holdout]))
+    print("[multiscene-REL] out_dir={} seed={} iters={}".format(out_dir, args.seed, n_iter), flush=True)
     deform = RelDeformModel()
     deform.train_setting(opt)
     bg = torch.zeros(3, device="cuda")
+
+    # config manifest so the run is self-describing on disk
+    config = {
+        "scenes": args.scenes, "holdout_scenes": args.holdout_scenes,
+        "iterations": n_iter, "seed": args.seed, "eval_every": args.eval_every,
+        "batch": args.batch, "lambda_dssim": opt.lambda_dssim,
+        "position_lr_init": opt.position_lr_init, "position_lr_final": opt.position_lr_final,
+        "spatial_lr_scale": deform.spatial_lr_scale,
+    }
+    history = []  # [{iteration, train, holdout}] across eval checkpoints
+
+    def dump_results():
+        json.dump({"config": config, "history": history},
+                  open(os.path.join(out_dir, "results.json"), "w"), indent=2)
+
+    def do_eval(it):
+        res = evaluate(scenes, deform, pipe, bg)
+        print("[it {:6d}] TRAIN-scene: {}".format(it, res), flush=True)
+        hz = evaluate(holdout, deform, pipe, bg) if holdout else {}
+        if holdout:
+            print("[it {:6d}] *** ZERO-SHOT held-out: {} ***".format(it, hz), flush=True)
+        history.append({"iteration": it, "train": res, "holdout": hz})
+        dump_results()
+
+    if args.load_checkpoint:
+        deform.load(args.load_checkpoint)
+        print("[multiscene-REL] loaded checkpoint {}".format(args.load_checkpoint), flush=True)
+    if args.eval_only:
+        do_eval(0)
+        print("[multiscene-REL] eval-only done -> {}/results.json".format(out_dir), flush=True)
+        return
 
     ema = 0.0
     for it in range(1, n_iter + 1):
@@ -192,11 +246,11 @@ def main():
         if it % 200 == 0:
             print("[it {:6d}] loss(ema)={:.5f}".format(it, ema), flush=True)
         if it % args.eval_every == 0 or it == n_iter:
-            res = evaluate(scenes, deform, pipe, bg)
-            print("[it {:6d}] TRAIN-scene: {}".format(it, res), flush=True)
-            if holdout:
-                hz = evaluate(holdout, deform, pipe, bg)
-                print("[it {:6d}] *** ZERO-SHOT held-out: {} ***".format(it, hz), flush=True)
+            do_eval(it)
+            deform.save(os.path.join(out_dir, "deform_{}.pth".format(it)))
+            deform.save(os.path.join(out_dir, "deform_latest.pth"))
+
+    print("[multiscene-REL] done -> {} (deform_latest.pth, results.json)".format(out_dir), flush=True)
 
 
 if __name__ == "__main__":

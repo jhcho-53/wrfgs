@@ -1,0 +1,21 @@
+Number of points at initialisation (lidar):  20582
+Number of points at initialisation (lidar):  21583
+Number of points at initialisation (lidar):  21451
+[multiscene-REL] train scenes: ['data_mw_town05_parkinglot', 'data_mw_Town05_ringroad'] | HOLD-OUT (zero-shot): ['data_mw_Town05_CBDcrossroad']
+[it    200] loss(ema)=0.11674
+[it    400] loss(ema)=0.10637
+[it    600] loss(ema)=0.06928
+[it    800] loss(ema)=0.06881
+[it   1000] loss(ema)=0.06358
+[it   1200] loss(ema)=0.06063
+[it   1400] loss(ema)=0.05421
+[it   1600] loss(ema)=0.06242
+[it   1800] loss(ema)=0.06956
+[it   2000] loss(ema)=0.05110
+[it   2200] loss(ema)=0.05494
+[it   2400] loss(ema)=0.04977
+[it   2600] loss(ema)=0.06186
+[it   2800] loss(ema)=0.05160
+[it   3000] loss(ema)=0.05585
+[it   3000] TRAIN-scene: {'data_mw_town05_parkinglot': {'ssim': 0.8887, 'az_err_deg': 1.4, 'el_err_deg': 1.0}, 'data_mw_Town05_ringroad': {'ssim': 0.8875, 'az_err_deg': 2.4, 'el_err_deg': 1.0}}
+[it   3000] *** ZERO-SHOT held-out: {'data_mw_Town05_CBDcrossroad': {'ssim': 0.8492, 'az_err_deg': 10.6, 'el_err_deg': 1.5}} ***

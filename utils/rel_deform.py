@@ -14,6 +14,8 @@ y = up, metres). d_rx = p/|p| is exactly the arrival direction the rasterizer
 will project, so the MLP predicts "how much energy scatterer p sends to the Rx
 for this Tx", and the renderer places it at the correct azimuth/elevation.
 """
+import os
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -97,3 +99,12 @@ class RelDeformModel:
             if g["name"] == "deform":
                 g["lr"] = self.scheduler(iteration)
                 return g["lr"]
+
+    def save(self, path):
+        """Persist the shared signal MLP weights (the only learnable state of the
+        scene-conditioned model) so a run is reproducible without retraining."""
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        torch.save(self.deform.state_dict(), path)
+
+    def load(self, path):
+        self.deform.load_state_dict(torch.load(path, map_location="cuda"))

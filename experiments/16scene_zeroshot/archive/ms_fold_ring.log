@@ -1,0 +1,42 @@
+Number of points at initialisation (lidar):  20582
+Number of points at initialisation (lidar):  21451
+Number of points at initialisation (lidar):  21583
+[multiscene] train scenes: ['data_mw_town05_parkinglot', 'data_mw_Town05_CBDcrossroad'] | HOLD-OUT (zero-shot): ['data_mw_Town05_ringroad']
+[it    200] loss(ema)=0.10224
+[it    400] loss(ema)=0.08516
+[it    600] loss(ema)=0.07984
+[it    800] loss(ema)=0.07216
+[it   1000] loss(ema)=0.06513
+[it   1200] loss(ema)=0.06310
+[it   1400] loss(ema)=0.06102
+[it   1500] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.8878, 'data_mw_Town05_CBDcrossroad': 0.8697}
+[it   1500] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_ringroad': 0.3414} ***
+[it   1600] loss(ema)=0.06629
+[it   1800] loss(ema)=0.06121
+[it   2000] loss(ema)=0.05954
+[it   2200] loss(ema)=0.05555
+[it   2400] loss(ema)=0.05252
+[it   2600] loss(ema)=0.05289
+[it   2800] loss(ema)=0.04975
+[it   3000] loss(ema)=0.05202
+[it   3000] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.8926, 'data_mw_Town05_CBDcrossroad': 0.8839}
+[it   3000] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_ringroad': 0.3191} ***
+[it   3200] loss(ema)=0.05041
+[it   3400] loss(ema)=0.05413
+[it   3600] loss(ema)=0.05236
+[it   3800] loss(ema)=0.05249
+[it   4000] loss(ema)=0.05113
+[it   4200] loss(ema)=0.04926
+[it   4400] loss(ema)=0.04893
+[it   4500] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.8924, 'data_mw_Town05_CBDcrossroad': 0.8836}
+[it   4500] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_ringroad': 0.3624} ***
+[it   4600] loss(ema)=0.04903
+[it   4800] loss(ema)=0.04931
+[it   5000] loss(ema)=0.04893
+[it   5200] loss(ema)=0.04692
+[it   5400] loss(ema)=0.04873
+[it   5600] loss(ema)=0.04434
+[it   5800] loss(ema)=0.04439
+[it   6000] loss(ema)=0.04510
+[it   6000] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.8955, 'data_mw_Town05_CBDcrossroad': 0.8878}
+[it   6000] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_ringroad': 0.2857} ***

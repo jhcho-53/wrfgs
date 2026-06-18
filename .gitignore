@@ -7,3 +7,8 @@ logs/
 output/
 scenes_static/
 data_mw_*_spatial/
+
+# multiscene training run outputs: default scratch dir, and bulky intermediate
+# numbered checkpoints under experiments/.../runs/ (keep deform_latest.pth + results.json + train.log)
+runs_multiscene/
+experiments/16scene_zeroshot/runs/**/deform_[0-9]*.pth

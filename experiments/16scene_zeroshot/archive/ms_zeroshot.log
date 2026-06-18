@@ -1,0 +1,87 @@
+Number of points at initialisation (lidar):  12189
+Number of points at initialisation (lidar):  14445
+Number of points at initialisation (lidar):  12647
+[multiscene] train scenes: ['data_mw_town05_parkinglot', 'data_mw_Town05_ringroad'] | HOLD-OUT (zero-shot): ['data_mw_Town05_CBDcrossroad']
+[it    200] loss(ema)=0.09876
+[it    400] loss(ema)=0.10608
+[it    600] loss(ema)=0.07160
+[it    800] loss(ema)=0.05546
+[it   1000] loss(ema)=0.04997
+[it   1200] loss(ema)=0.05571
+[it   1400] loss(ema)=0.04940
+[it   1600] loss(ema)=0.05293
+[it   1800] loss(ema)=0.06240
+[it   2000] loss(ema)=0.04513
+[it   2200] loss(ema)=0.04589
+[it   2400] loss(ema)=0.04323
+[it   2600] loss(ema)=0.05360
+[it   2800] loss(ema)=0.04772
+[it   3000] loss(ema)=0.04304
+[it   3200] loss(ema)=0.04899
+[it   3400] loss(ema)=0.04679
+[it   3600] loss(ema)=0.04452
+[it   3800] loss(ema)=0.04110
+[it   4000] loss(ema)=0.04545
+[it   4000] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.9033, 'data_mw_Town05_ringroad': 0.8917}
+[it   4000] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_CBDcrossroad': 0.7402} ***
+[it   4200] loss(ema)=0.04303
+[it   4400] loss(ema)=0.04220
+[it   4600] loss(ema)=0.04142
+[it   4800] loss(ema)=0.04003
+[it   5000] loss(ema)=0.04506
+[it   5200] loss(ema)=0.05013
+[it   5400] loss(ema)=0.04450
+[it   5600] loss(ema)=0.04412
+[it   5800] loss(ema)=0.04079
+[it   6000] loss(ema)=0.03986
+[it   6200] loss(ema)=0.03777
+[it   6400] loss(ema)=0.04668
+[it   6600] loss(ema)=0.04213
+[it   6800] loss(ema)=0.03837
+[it   7000] loss(ema)=0.03938
+[it   7200] loss(ema)=0.03957
+[it   7400] loss(ema)=0.03848
+[it   7600] loss(ema)=0.03924
+[it   7800] loss(ema)=0.04293
+[it   8000] loss(ema)=0.03896
+[it   8000] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.9063, 'data_mw_Town05_ringroad': 0.9001}
+[it   8000] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_CBDcrossroad': 0.7354} ***
+[it   8200] loss(ema)=0.04060
+[it   8400] loss(ema)=0.03873
+[it   8600] loss(ema)=0.03885
+[it   8800] loss(ema)=0.03763
+[it   9000] loss(ema)=0.04249
+[it   9200] loss(ema)=0.03980
+[it   9400] loss(ema)=0.04441
+[it   9600] loss(ema)=0.04174
+[it   9800] loss(ema)=0.03951
+[it  10000] loss(ema)=0.04040
+[it  10200] loss(ema)=0.03698
+[it  10400] loss(ema)=0.03715
+[it  10600] loss(ema)=0.03647
+[it  10800] loss(ema)=0.03813
+[it  11000] loss(ema)=0.03851
+[it  11200] loss(ema)=0.03687
+[it  11400] loss(ema)=0.04124
+[it  11600] loss(ema)=0.03967
+[it  11800] loss(ema)=0.05001
+[it  12000] loss(ema)=0.03920
+[it  12000] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.9071, 'data_mw_Town05_ringroad': 0.9011}
+[it  12000] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_CBDcrossroad': 0.719} ***
+[it  12200] loss(ema)=0.03917
+[it  12400] loss(ema)=0.04561
+[it  12600] loss(ema)=0.03601
+[it  12800] loss(ema)=0.03541
+[it  13000] loss(ema)=0.04167
+[it  13200] loss(ema)=0.03673
+[it  13400] loss(ema)=0.03705
+[it  13600] loss(ema)=0.03822
+[it  13800] loss(ema)=0.03871
+[it  14000] loss(ema)=0.04182
+[it  14200] loss(ema)=0.03728
+[it  14400] loss(ema)=0.03496
+[it  14600] loss(ema)=0.03522
+[it  14800] loss(ema)=0.03726
+[it  15000] loss(ema)=0.03785
+[it  15200] loss(ema)=0.03713
+[it  15400] loss(ema)=0.03655

@@ -1,0 +1,12 @@
+Number of points at initialisation (lidar):  12189
+Number of points at initialisation (lidar):  14445
+Number of points at initialisation (lidar):  12647
+[multiscene] 3 scenes: ['data_mw_town05_parkinglot', 'data_mw_Town05_ringroad', 'data_mw_Town05_CBDcrossroad']
+[it    200] loss(ema)=0.12207
+[it    400] loss(ema)=0.12596
+[it    600] loss(ema)=0.12305
+[it    600] EVAL median SSIM per scene: {'data_mw_town05_parkinglot': 0.8675, 'data_mw_Town05_ringroad': 0.7773, 'data_mw_Town05_CBDcrossroad': 0.7956}
+[it    800] loss(ema)=0.11345
+[it   1000] loss(ema)=0.08987
+[it   1200] loss(ema)=0.08456
+[it   1200] EVAL median SSIM per scene: {'data_mw_town05_parkinglot': 0.8863, 'data_mw_Town05_ringroad': 0.8773, 'data_mw_Town05_CBDcrossroad': 0.7927}

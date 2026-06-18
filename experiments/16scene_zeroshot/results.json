@@ -1,0 +1,50 @@
+{
+  "experiment": "16-scene scale-up: cross-scene + cross-town zero-shot generalization",
+  "model": "relative-geometry scene-conditioned WRF-GS+ (frozen lidar Gaussians + shared RelDeformModel)",
+  "doc": "docs/research/2026-06-18-scene-conditioned-wrf-generalization.md (§4.4)",
+  "commit": "371d91b",
+  "metric_note": "az_err_deg / el_err_deg = power-weighted DoA angular error (degrees), the discriminative metric. SSIM saturates on these smooth densified targets (~0.88 baseline) and is non-discriminative here.",
+  "source": "experiments/16scene_zeroshot/archive/train16.log (original run, iteration=12000, NO seed set)",
+  "config": {
+    "iterations": 12000,
+    "eval_every": 4000,
+    "batch": 1,
+    "seed": null,
+    "lambda_dssim": 0.2,
+    "env": "conda wrfgsplus (py3.11 + torch 2.12 cu130), 2x NVIDIA B200 (sm_100)",
+    "train_scenes": [
+      "data_mw_Town03_crossroad", "data_mw_Town03_gastation", "data_mw_Town03_roundabout",
+      "data_mw_Town03_Tjunction", "data_mw_Town05_2skybridge", "data_mw_Town05_CBDcrossroad",
+      "data_mw_Town05_Tjunction", "data_mw_town05_parkinglot", "data_mw_Town07_crossroad",
+      "data_mw_Town10_curvyroad", "data_mw_Town10_Hroad", "data_mw_Town10_skybridge"
+    ],
+    "holdout_scenes": [
+      "data_mw_Town03_5wayroad", "data_mw_Town05_ringroad",
+      "data_mw_Town07_grainsilos", "data_mw_Town10_crossroad"
+    ],
+    "elevated_rsu_in_training": ["data_mw_Town03_Tjunction (z=8m)", "data_mw_Town03_crossroad (z=8.2m)"]
+  },
+  "results_it12000": {
+    "zero_shot_holdout": {
+      "data_mw_Town03_5wayroad":  {"ssim": 0.8876, "az_err_deg": 1.7, "el_err_deg": 0.7, "baseline_az_deg": 36.0, "advantage_x": 21},
+      "data_mw_Town05_ringroad":  {"ssim": 0.8351, "az_err_deg": 5.8, "el_err_deg": 1.9, "baseline_az_deg": 53.5, "advantage_x": 9,  "note": "elevated RSU; failed at 83 deg with only 2 ground-only training scenes -> 5.8 deg here (14x vs that prior run)"},
+      "data_mw_Town07_grainsilos":{"ssim": 0.8971, "az_err_deg": 5.3, "el_err_deg": 0.8, "baseline_az_deg": 36.7, "advantage_x": 7},
+      "data_mw_Town10_crossroad": {"ssim": 0.8768, "az_err_deg": 3.5, "el_err_deg": 1.0, "baseline_az_deg": 6.9,  "advantage_x": 2}
+    },
+    "train_scene": {
+      "data_mw_Town03_crossroad":  {"ssim": 0.8872, "az_err_deg": 1.3, "el_err_deg": 0.9},
+      "data_mw_Town03_gastation":  {"ssim": 0.8856, "az_err_deg": 3.0, "el_err_deg": 1.5},
+      "data_mw_Town03_roundabout": {"ssim": 0.9014, "az_err_deg": 2.6, "el_err_deg": 0.7},
+      "data_mw_Town03_Tjunction":  {"ssim": 0.8942, "az_err_deg": 6.7, "el_err_deg": 2.0},
+      "data_mw_Town05_2skybridge": {"ssim": 0.9184, "az_err_deg": 4.5, "el_err_deg": 0.9},
+      "data_mw_Town05_CBDcrossroad":{"ssim": 0.8925, "az_err_deg": 1.7, "el_err_deg": 0.7},
+      "data_mw_Town05_Tjunction":  {"ssim": 0.9002, "az_err_deg": 0.7, "el_err_deg": 0.9},
+      "data_mw_town05_parkinglot": {"ssim": 0.8914, "az_err_deg": 0.7, "el_err_deg": 1.1},
+      "data_mw_Town07_crossroad":  {"ssim": 0.8804, "az_err_deg": 0.9, "el_err_deg": 1.1},
+      "data_mw_Town10_curvyroad":  {"ssim": 0.8920, "az_err_deg": 1.7, "el_err_deg": 0.6},
+      "data_mw_Town10_Hroad":      {"ssim": 0.8893, "az_err_deg": 2.0, "el_err_deg": 0.5},
+      "data_mw_Town10_skybridge":  {"ssim": 0.9092, "az_err_deg": 4.8, "el_err_deg": 0.7}
+    }
+  },
+  "summary": "All 4 held-out scenes generalize zero-shot (DoA 1.7-5.8 deg, 2-21x better than the trivial mean-spectrum baseline). Held-out errors equal train-scene errors (0.7-6.7 deg): negligible generalization gap. The elevated-RSU ringroad that failed at 83 deg with 2 ground-only training scenes generalizes at 5.8 deg once elevated scenes are in the 12-scene training set."
+}

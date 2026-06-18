@@ -1,0 +1,42 @@
+Number of points at initialisation (lidar):  20582
+Number of points at initialisation (lidar):  21583
+Number of points at initialisation (lidar):  21451
+[multiscene] train scenes: ['data_mw_town05_parkinglot', 'data_mw_Town05_ringroad'] | HOLD-OUT (zero-shot): ['data_mw_Town05_CBDcrossroad']
+[it    200] loss(ema)=0.10079
+[it    400] loss(ema)=0.08139
+[it    600] loss(ema)=0.07700
+[it    800] loss(ema)=0.07356
+[it   1000] loss(ema)=0.06349
+[it   1200] loss(ema)=0.06318
+[it   1400] loss(ema)=0.05322
+[it   1500] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.888, 'data_mw_Town05_ringroad': 0.884}
+[it   1500] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_CBDcrossroad': 0.186} ***
+[it   1600] loss(ema)=0.05885
+[it   1800] loss(ema)=0.06028
+[it   2000] loss(ema)=0.05248
+[it   2200] loss(ema)=0.05617
+[it   2400] loss(ema)=0.05701
+[it   2600] loss(ema)=0.04963
+[it   2800] loss(ema)=0.05214
+[it   3000] loss(ema)=0.05351
+[it   3000] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.893, 'data_mw_Town05_ringroad': 0.8882}
+[it   3000] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_CBDcrossroad': 0.1053} ***
+[it   3200] loss(ema)=0.04827
+[it   3400] loss(ema)=0.05304
+[it   3600] loss(ema)=0.04940
+[it   3800] loss(ema)=0.04630
+[it   4000] loss(ema)=0.04708
+[it   4200] loss(ema)=0.05132
+[it   4400] loss(ema)=0.04768
+[it   4500] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.8958, 'data_mw_Town05_ringroad': 0.8952}
+[it   4500] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_CBDcrossroad': 0.1222} ***
+[it   4600] loss(ema)=0.04841
+[it   4800] loss(ema)=0.04896
+[it   5000] loss(ema)=0.04686
+[it   5200] loss(ema)=0.04620
+[it   5400] loss(ema)=0.04589
+[it   5600] loss(ema)=0.04722
+[it   5800] loss(ema)=0.04826
+[it   6000] loss(ema)=0.04683
+[it   6000] TRAIN-scene median SSIM: {'data_mw_town05_parkinglot': 0.898, 'data_mw_Town05_ringroad': 0.8946}
+[it   6000] *** ZERO-SHOT held-out median SSIM: {'data_mw_Town05_CBDcrossroad': 0.135} ***
