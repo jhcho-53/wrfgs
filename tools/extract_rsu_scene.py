@@ -70,8 +70,8 @@ def main(argv=None):
     ap.add_argument("--max-points", type=int, default=40000)
     args = ap.parse_args(argv)
 
-    # Sensor Data scenario dir carries a _seed* suffix
-    pat = os.path.join(args.root, args.weather, "Sensor Data", args.town, args.scenario + "_seed*")
+    # Sensor Data scenario dir may add a descriptor before the seed suffix
+    pat = os.path.join(args.root, args.weather, "Sensor Data", args.town, args.scenario + "*_seed*")
     matches = sorted(glob.glob(pat))
     assert len(matches) == 1, "expected one sensor dir, got {}".format(matches)
     rsu_dir = os.path.join(matches[0], args.rsu)
